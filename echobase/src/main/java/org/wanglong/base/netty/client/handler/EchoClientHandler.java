@@ -3,6 +3,7 @@ package org.wanglong.base.netty.client.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
+import org.wanglong.base.vo.Member;
 
 /**
  * 需要进行数据的读取操作，服务器端处理完成的数据信息会读取
@@ -13,10 +14,20 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        for (int i = 0; i < REPET; i++) {
+      /*  for (int i = 0; i < REPET; i++) {
             String msg = ("[" + i + "]" + "hello world" + System.getProperty("line.separator"));
+           // String msg = "[" + i + "]" + "hello world" + HostInfo.SEPERATOR ;
             ctx.writeAndFlush(msg);
-        }
+        }*/
+        //现在直接进行对象的发送
+        Member member = new Member();
+        member.setMid("hello");
+        member.setName("hello");
+        member.setAge(12);
+        member.setSalary(1.2);
+        ctx.writeAndFlush(member);
+        System.out.println("发送对象");
+
     }
 
     @Override
@@ -24,8 +35,9 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
         //只要服务器端发送完成信息之后，都会进行此方法进行内容的输出操作
         try {
             // ByteBuf message = (ByteBuf) msg;
-            String readMessage = msg.toString().trim();//接收返回数据内容
-            System.out.println(readMessage);
+            //  String readMessage = msg.toString().trim();//接收返回数据内容
+            Member member = (Member) msg;
+            System.out.println(member);
            /* if ("exit".equalsIgnoreCase(readMessage)) {
                 //结束操作
                 System.out.println("bye bye  结束本次传输");

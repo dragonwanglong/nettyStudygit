@@ -9,11 +9,9 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.FixedLengthFrameDecoder;
-import io.netty.handler.codec.LineBasedFrameDecoder;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.CharsetUtil;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.wanglong.base.netty.server.handler.EchoServerHandler;
 
 //实现基础线程池与网络连接的配置项
@@ -36,10 +34,12 @@ public class EchoServer {
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel socketChannel) throws Exception {
-                    socketChannel.pipeline().addLast(new FixedLengthFrameDecoder(100));//传输的文件块控制在100个
-                    socketChannel.pipeline().addLast(new LineBasedFrameDecoder(1024));//追加拆包器
-                    socketChannel.pipeline().addLast(new StringEncoder(CharsetUtil.UTF_8));
-                    socketChannel.pipeline().addLast(new StringDecoder(CharsetUtil.UTF_8));
+                    //将自定义的分隔符放入缓存
+                    // socketChannel.pipeline().addLast(new LineBasedFrameDecoder(1024));//追加拆包器
+                    // socketChannel.pipeline().addLast(new StringEncoder(CharsetUtil.UTF_8));
+                    // socketChannel.pipeline().addLast(new StringDecoder(CharsetUtil.UTF_8));
+                    socketChannel.pipeline().addLast(new ObjectDecoder(ClassResolvers.cacheDisabled((this.getClass().getClassLoader()))));
+                    socketChannel.pipeline().addLast(new ObjectEncoder());
                     socketChannel.pipeline().addLast(new EchoServerHandler());//追加处理器 并且以后的开发也是追加处理器
 
                 }
