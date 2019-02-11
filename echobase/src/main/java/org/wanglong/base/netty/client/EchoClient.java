@@ -8,7 +8,11 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.FixedLengthFrameDecoder;
 import io.netty.handler.codec.LineBasedFrameDecoder;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.CharsetUtil;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.wanglong.base.netty.client.handler.EchoClientHandler;
@@ -28,7 +32,10 @@ public class EchoClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            socketChannel.pipeline().addLast(new FixedLengthFrameDecoder(100));//传输的文件块控制在100个
                             socketChannel.pipeline().addLast(new LineBasedFrameDecoder(1024));//追加拆包器
+                            socketChannel.pipeline().addLast(new StringEncoder(CharsetUtil.UTF_8));//追加字符编码器
+                            socketChannel.pipeline().addLast(new StringDecoder(CharsetUtil.UTF_8));//追加字符解析器
                             socketChannel.pipeline().addLast(new EchoClientHandler());//追加处理器 并且以后的开发也是追加处理器
                         }
                     });

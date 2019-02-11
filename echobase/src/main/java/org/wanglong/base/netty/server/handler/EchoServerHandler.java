@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 
 //处理echo的操作方式
@@ -25,27 +24,26 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
         try {
             //表示连接成功进行一些数据读取操作,对与读取操作完成后也可以直接响应
             //对于客户端发送来的信息 由于没有制定的数据类型  所以统一用object进行接收
-            ByteBuf buf = (ByteBuf) msg;
+            // ByteBuf buf = (ByteBuf) msg;
             //将字节缓冲区的内容转为字符串并进行编码指定
-            String inData = buf.toString(CharsetUtil.UTF_8);
+            String inData = msg.toString().trim();
             System.err.println(inData);
             //回应数据
-            String echoData = "[Echo]" + inData + System.getProperty("line.separator");
+            String echoData = "[服务器]" + inData + System.getProperty("line.separator");
             //进行连接断开，结束当前交互  exit 是来自客户端的内容  表示客户端的结束
             /*if ("exit".equalsIgnoreCase(inData)) {
                 echoData = "exit";
             }*/
             //将回应内容转化为byte字节数组
-            byte[] echoDataBytes = echoData.getBytes();
+            //byte[] echoDataBytes = echoData.getBytes();
             //开辟缓冲区
-            ByteBuf echoBuffer = Unpooled.buffer(echoDataBytes.length);
+            //ByteBuf echoBuffer = Unpooled.buffer(echoDataBytes.length);
             //将数据写入缓存中
-            echoBuffer.writeBytes(echoDataBytes);
-            ctx.writeAndFlush(echoBuffer);
+            //echoBuffer.writeBytes(echoDataBytes);
+            ctx.writeAndFlush(echoData);
         } finally {
             //如果发生异常 失败  清除缓存
             ReferenceCountUtil.release(msg);

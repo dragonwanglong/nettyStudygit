@@ -1,10 +1,7 @@
 package org.wanglong.base.netty.client.handler;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 
 /**
@@ -17,21 +14,17 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         for (int i = 0; i < REPET; i++) {
-            byte[] byet = ("[" + i + "]" + "hello world" + System.getProperty("line.separator")).getBytes(CharsetUtil.UTF_8);
-            ByteBuf sendBuf = Unpooled.buffer(byet.length);
-            sendBuf.writeBytes(byet);
-            ctx.writeAndFlush(sendBuf);
+            String msg = ("[" + i + "]" + "hello world" + System.getProperty("line.separator"));
+            ctx.writeAndFlush(msg);
         }
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         //只要服务器端发送完成信息之后，都会进行此方法进行内容的输出操作
-
         try {
-
-            ByteBuf message = (ByteBuf) msg;
-            String readMessage = message.toString(CharsetUtil.UTF_8);
+            // ByteBuf message = (ByteBuf) msg;
+            String readMessage = msg.toString().trim();//接收返回数据内容
             System.out.println(readMessage);
            /* if ("exit".equalsIgnoreCase(readMessage)) {
                 //结束操作
