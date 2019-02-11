@@ -32,12 +32,13 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
             ByteBuf buf = (ByteBuf) msg;
             //将字节缓冲区的内容转为字符串并进行编码指定
             String inData = buf.toString(CharsetUtil.UTF_8);
+            System.err.println(inData);
             //回应数据
             String echoData = "[Echo]" + inData;
             //进行连接断开，结束当前交互  exit 是来自客户端的内容  表示客户端的结束
-            if ("exit".equalsIgnoreCase(inData)) {
+            /*if ("exit".equalsIgnoreCase(inData)) {
                 echoData = "exit";
-            }
+            }*/
             //将回应内容转化为byte字节数组
             byte[] echoDataBytes = echoData.getBytes();
             //开辟缓冲区

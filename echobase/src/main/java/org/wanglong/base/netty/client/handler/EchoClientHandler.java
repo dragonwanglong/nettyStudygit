@@ -6,12 +6,24 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
-import org.wanglong.utils.InputUtil;
 
 /**
  * 需要进行数据的读取操作，服务器端处理完成的数据信息会读取
  */
 public class EchoClientHandler extends ChannelInboundHandlerAdapter {
+
+    private static int REPET = 500;
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        for (int i = 0; i < REPET; i++) {
+            System.out.println("********");
+            byte[] byet = ("[" + i + "]" + "hello world").getBytes(CharsetUtil.UTF_8);
+            ByteBuf sendBuf = Unpooled.buffer(byet.length);
+            sendBuf.writeBytes(byet);
+            ctx.writeAndFlush(sendBuf);
+        }
+    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -21,17 +33,18 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
 
             ByteBuf message = (ByteBuf) msg;
             String readMessage = message.toString(CharsetUtil.UTF_8);
-            if ("exit".equalsIgnoreCase(readMessage)) {
+            System.out.println(readMessage);
+           /* if ("exit".equalsIgnoreCase(readMessage)) {
                 //结束操作
                 System.out.println("bye bye  结束本次传输");
-            } else {
-                System.out.println(readMessage);
+            } else {*/
+                /*System.out.println(readMessage);
                 String string = InputUtil.getString("请输入要发送的消息");
                 byte[] bytes = string.getBytes();
                 ByteBuf sendBuf = Unpooled.buffer(bytes.length);
                 sendBuf.writeBytes(bytes);//保存在缓存之中
-                ctx.writeAndFlush(sendBuf);//将数据强制发送过去
-            }
+                ctx.writeAndFlush(sendBuf);//将数据强制发送过去*/
+            // }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
