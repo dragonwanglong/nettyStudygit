@@ -17,8 +17,7 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         for (int i = 0; i < REPET; i++) {
-            System.out.println("********");
-            byte[] byet = ("[" + i + "]" + "hello world").getBytes(CharsetUtil.UTF_8);
+            byte[] byet = ("[" + i + "]" + "hello world" + System.getProperty("line.separator")).getBytes(CharsetUtil.UTF_8);
             ByteBuf sendBuf = Unpooled.buffer(byet.length);
             sendBuf.writeBytes(byet);
             ctx.writeAndFlush(sendBuf);

@@ -34,7 +34,7 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
             String inData = buf.toString(CharsetUtil.UTF_8);
             System.err.println(inData);
             //回应数据
-            String echoData = "[Echo]" + inData;
+            String echoData = "[Echo]" + inData + System.getProperty("line.separator");
             //进行连接断开，结束当前交互  exit 是来自客户端的内容  表示客户端的结束
             /*if ("exit".equalsIgnoreCase(inData)) {
                 echoData = "exit";
