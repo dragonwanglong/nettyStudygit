@@ -8,6 +8,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.wanglong.base.netty.client.handler.EchoClientHandler;
 import org.wanglong.info.HostInfo;
 
@@ -30,6 +32,14 @@ public class EchoClient {
                     });
 
             ChannelFuture channelFuture = bootstrap.connect(HostInfo.HOST_NAME, HostInfo.PORT);
+            channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
+                @Override
+                public void operationComplete(Future future) throws Exception {
+                    if (future.isSuccess()) {
+                        System.out.println("连接已经建立 可以连接");
+                    }
+                }
+            });
             channelFuture.channel().closeFuture().sync();//等待关闭连接
         } finally {
             group.shutdownGracefully();//关闭线程池
